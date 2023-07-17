@@ -1,38 +1,26 @@
-const MAX_LENGTH = 20;
+function checkMeetingTime(startOfWorkday, endOfWorkday, startOfMeeting, meetingDuration) {
+  // Разбиваем строки на отдельные часы и минуты
+  const [startOfWorkdayHours, startOfWorkdayMinutes] = startOfWorkday.split(':').map(Number);
+  const [endOfWorkdayHours, endOfWorkdayMinutes] = endOfWorkday.split(':').map(Number);
+  const [startOfMeetingHours, startOfMeetingMinutes] = startOfMeeting.split(':').map(Number);
 
-function checkLength(str, maxLength) {
-  return str.length <= maxLength;
+  // Рассчитываем общее количество минут для каждой временной метки
+  const startOfWorkdayTotalMinutes = startOfWorkdayHours * 60 + startOfWorkdayMinutes;
+  const endOfWorkdayTotalMinutes = endOfWorkdayHours * 60 + endOfWorkdayMinutes;
+  const startOfMeetingTotalMinutes = startOfMeetingHours * 60 + startOfMeetingMinutes;
+
+  // Рассчитываем время окончания встречи
+  const endOfMeetingTotalMinutes = startOfMeetingTotalMinutes + meetingDuration;
+
+  // Проверяем, находится ли начало и окончание встречи в пределах рабочего дня
+  const isStartWithinWorkday = startOfMeetingTotalMinutes >= startOfWorkdayTotalMinutes && startOfMeetingTotalMinutes <= endOfWorkdayTotalMinutes;
+  const isEndWithinWorkday = endOfMeetingTotalMinutes >= startOfWorkdayTotalMinutes && endOfMeetingTotalMinutes <= endOfWorkdayTotalMinutes;
+
+  return isStartWithinWorkday && isEndWithinWorkday;
 }
 
-function isPalindrome(str) {
-  const normalizedStr = str.replaceAll(' ', '').toLowerCase();
-  let reversedStr = '';
-
-  for (let i = normalizedStr.length - 1; i >= 0; i--) {
-    reversedStr += normalizedStr[i];
-  }
-
-  return normalizedStr === reversedStr;
-}
-
- function extractNumber(str) {
-  let numStr = '';
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charAt(i);
-    if (!isNaN(char)) {
-      numStr += char;
-    }
-  }
-  if (numStr === '') {
-    return NaN;
-  } else {
-    return parseInt(numStr);
-  }
-} 
-
-const inputString = 'Лёша на полке клопа нашёл ';
-const inputNumericString = 'ECMAScript 2022';
-
-console.log('is it polindrome? ' + isPalindrome(inputString));
-console.log('Given str <= '+ MAX_LENGTH + ' characters? ' + checkLength(inputString));
-console.log ('Numbers:'+ extractNumber(inputString))
+console.log(checkMeetingTime('08:00', '17:30', '14:00', 90)); // true
+console.log(checkMeetingTime('8:0', '10:0', '8:0', 120));     // true
+console.log(checkMeetingTime('08:00', '14:30', '14:00', 90)); // false
+console.log(checkMeetingTime('14:00', '17:30', '08:0', 90));  // false
+console.log(checkMeetingTime('8:00', '17:30', '08:00', 900)); // false
